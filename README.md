@@ -1,29 +1,29 @@
 # Bhavuk Jain | Data Engineering Portfolio
 
-A responsive static portfolio with an interactive RouteScope travel-data demo, engineering case studies, and professional background.
+A responsive portfolio website with an interactive RouteScope travel-data demo, engineering case studies, and professional background.
 
-## Contents
-- `index.html`: complete website, CSS, and browser demo.
-- `carrier-priority-demo.zip`: downloadable project package.
-- `projects/routescope-analytics/`: Python + SQL implementation with synthetic data.
-- `screenshots/`: screenshots captured from the published website in a separate browser.
-- `.nojekyll`: serves the website as static files.
+## Website
+https://bhavukj100.github.io/
 
-## Publish
-1. Sign into GitHub as `bhavukj100`.
-2. Create a public repository named `bhavukj100.github.io`.
-3. Extract this ZIP and upload its contents to the repository root. Upload `index.html` at the root, not inside another folder.
-4. Open repository Settings > Pages. Under Build and deployment, choose Deploy from a branch, select main and / (root), then Save.
-5. Wait for GitHub to confirm deployment and use the URL shown there. Expected address: https://bhavukj100.github.io/.
+## Repository contents
+- `index.html`: website, CSS, and interactive JavaScript demo.
+- `carrier-priority-demo.zip`: complete Python + SQL project, synthetic data, sample outputs, tests, and CI workflow.
+- `.nojekyll`: static GitHub Pages configuration.
 
-## Run the project
+## Run RouteScope
+Download and extract `carrier-priority-demo.zip`, then run these commands inside the extracted `routescope-analytics` folder:
+
 ```bash
-cd projects/routescope-analytics
 python pipeline.py
 python -m unittest discover -s tests -v
 ```
 
-RouteScope is a new implementation prepared with AI assistance. It uses synthetic flight observations and contains no employer code or datasets. EventLens and WarehouseBridge are conceptual design case studies, not runnable public implementations.
+The pipeline validates synthetic flight observations, calculates route-level market shares, and selects the smallest ranked carrier prefix reaching a configurable coverage target. It exports recommendations and a quality report.
 
-## Design
-Responsive layouts, semantic headings, keyboard focus styles, configurable route coverage, expandable project descriptions, project download, email contact, and a GitHub profile link. No build tooling or third-party JavaScript required.
+RouteScope is a new portfolio implementation prepared with AI assistance. EventLens and WarehouseBridge are conceptual design case studies. Public examples contain no employer source code or datasets.
+
+## Website features
+Responsive layout, accessible controls, route selection, adjustable coverage, expandable case studies, project download, email contact, and GitHub profile link. No build dependencies.
+
+## Hosting
+GitHub Pages publishes the `master` branch from the repository root.
