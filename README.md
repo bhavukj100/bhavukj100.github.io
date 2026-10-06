@@ -1,29 +1,16 @@
 # Bhavuk Jain | Data Engineering Portfolio
 
-A responsive portfolio website with an interactive RouteScope travel-data demo, engineering case studies, and professional background.
+A responsive portfolio with runnable RouteScope and AWS Retail Sales Pipeline projects, professional background, and contact links.
 
-## Website
-https://bhavukj100.github.io/
+Website: https://bhavukj100.github.io/
 
-## Repository contents
-- `index.html`: website, CSS, and interactive JavaScript demo.
-- `carrier-priority-demo.zip`: complete Python + SQL project, synthetic data, sample outputs, tests, and CI workflow.
-- `.nojekyll`: static GitHub Pages configuration.
+## Featured projects
 
-## Run RouteScope
-Download and extract `carrier-priority-demo.zip`, then run these commands inside the extracted `routescope-analytics` folder:
+- **RouteScope:** synthetic route coverage analytics using Python and SQL. Download `carrier-priority-demo.zip`, extract it, and run `python pipeline.py` and `python -m unittest discover -s tests -v` in `routescope-analytics`.
+- **[AWS Retail Sales Pipeline](https://github.com/bhavukj100/aws-retail-sales-pipeline):** synthetic orders, payments, returns, and products reconciled with PySpark. Includes Parquet outputs, four local tests, Terraform for S3/Glue/Athena, and an optional Airflow DAG. AWS infrastructure has not been deployed; Airflow execution has not been tested.
 
-```bash
-python pipeline.py
-python -m unittest discover -s tests -v
-```
+## Files and hosting
 
-The pipeline validates synthetic flight observations, calculates route-level market shares, and selects the smallest ranked carrier prefix reaching a configurable coverage target. It exports recommendations and a quality report.
+`index.html` contains the responsive website and interactive RouteScope demo. `.nojekyll` enables static serving. GitHub Pages publishes the `master` branch from the repository root. `.github/workflows/daily-checks.yml` validates the website and packaged RouteScope project, then updates `ACTIVITY.md` with automated maintenance results.
 
-RouteScope is a new portfolio implementation prepared with AI assistance. EventLens and WarehouseBridge are conceptual design case studies. Public examples contain no employer source code or datasets.
-
-## Website features
-Responsive layout, accessible controls, route selection, adjustable coverage, expandable case studies, project download, email contact, and GitHub profile link. No build dependencies.
-
-## Hosting
-GitHub Pages publishes the `master` branch from the repository root.
+The projects are new AI-assisted portfolio implementations using synthetic data. Public examples contain no employer source code, datasets, or internal system details.
