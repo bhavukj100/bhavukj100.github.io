@@ -49,11 +49,20 @@
     window.dataLayer = window.dataLayer || [];
     window.gtag = function() { window.dataLayer.push(arguments); };
     gtag('js', new Date());
-    // Do not send arbitrary URL parameters, anchor text or email addresses.
-    gtag('config', id, {send_page_view:false, allow_google_signals:false, allow_ad_personalization_signals:false});
+    // Keep page URLs clean; accept only this profile's fixed campaign labels.
     const page = location.origin + location.pathname;
     let referrer = '';
     try { referrer = document.referrer ? new URL(document.referrer).origin : ''; } catch (_) {}
+    const params = new URLSearchParams(location.search);
+    const campaign = {};
+    if (params.get('utm_source') === 'github' && params.get('utm_medium') === 'referral' && params.get('utm_campaign') === 'github_profile') {
+      campaign.campaign_source = 'github';
+      campaign.campaign_medium = 'referral';
+      campaign.campaign_name = 'github_profile';
+      const content = params.get('utm_content');
+      if (['portfolio_link', 'demo_link', 'project_table'].includes(content)) campaign.campaign_content = content;
+    }
+    gtag('config', id, {send_page_view:false, allow_google_signals:false, allow_ad_personalization_signals:false, page_location:page, page_referrer:referrer, ...campaign});
     gtag('event', 'page_view', {page_location:page, page_referrer:referrer});
     const tag = document.createElement('script');
     tag.async = true;
