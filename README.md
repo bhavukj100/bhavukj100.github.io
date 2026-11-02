@@ -7,7 +7,8 @@ can explore a small result set, understand the modeling choices, and open the
 source code without leaving the page crowded with every case study at once.
 Each project card has an original purple SVG illustration tied to its purpose. The
 homepage listing shortcuts open the matching record in the Airbnb explorer.
-On phones, only the selected card expands to show its visual.
+On phones, only the selected card expands to show its visual. Controls have
+comfortable touch targets, and the hero explorer links always open the data view.
 
 ## Projects
 
