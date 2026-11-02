@@ -55,7 +55,7 @@ preview or presented as a booking count. The interactive data is embedded in
 ## Hosting and maintenance
 
 `index.html` contains the website, styles, demos, and optional consent-based
-analytics. Plus Jakarta Sans is embedded as a subsetted variable WOFF font in the
+analytics. Manrope is embedded as a subsetted variable WOFF font in the
 HTML, so no external font request is needed. Its SIL Open Font License is included
 in the HTML source. System fonts remain as fallbacks.
 `.nojekyll` enables static serving. GitHub Pages publishes `master` from the
