@@ -5,6 +5,9 @@ Website: https://bhavukj100.github.io/
 A responsive portfolio with three projects in one interactive gallery. Visitors
 can explore a small result set, understand the modeling choices, and open the
 source code without leaving the page crowded with every case study at once.
+Each project card includes a visual built from its own example results. The
+homepage listing shortcuts open the matching record in the Airbnb explorer.
+On phones, only the selected card expands to show its visual.
 
 ## Projects
 
@@ -52,7 +55,7 @@ preview or presented as a booking count. The interactive data is embedded in
 ## Hosting and maintenance
 
 `index.html` contains the website, styles, demos, and optional consent-based
-analytics. DM Sans is loaded from Google Fonts, with system-font fallbacks.
+analytics. Plus Jakarta Sans is loaded from Google Fonts, with system-font fallbacks.
 `.nojekyll` enables static serving. GitHub Pages publishes `master` from the
 repository root. `.github/workflows/daily-checks.yml` validates website anchors,
 the RouteScope archive, and coverage scenarios. It updates `ACTIVITY.md` with
