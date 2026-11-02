@@ -52,7 +52,7 @@ preview or presented as a booking count. The interactive data is embedded in
 ## Hosting and maintenance
 
 `index.html` contains the website, styles, demos, and optional consent-based
-analytics. Manrope is loaded from Google Fonts, with system-font fallbacks.
+analytics. DM Sans is loaded from Google Fonts, with system-font fallbacks.
 `.nojekyll` enables static serving. GitHub Pages publishes `master` from the
 repository root. `.github/workflows/daily-checks.yml` validates website anchors,
 the RouteScope archive, and coverage scenarios. It updates `ACTIVITY.md` with
