@@ -55,7 +55,8 @@ preview or presented as a booking count. The interactive data is embedded in
 ## Hosting and maintenance
 
 `index.html` contains the website, styles, demos, and optional consent-based
-analytics. The original Arial, Helvetica, sans-serif font stack is restored.
+analytics. The original Arial, Helvetica, sans-serif font stack and bold heading hierarchy
+are restored.
 Typography uses locally available fonts, with no embedded font or external font request.
 `.nojekyll` enables static serving. GitHub Pages publishes `master` from the
 repository root. `.github/workflows/daily-checks.yml` validates website anchors,
