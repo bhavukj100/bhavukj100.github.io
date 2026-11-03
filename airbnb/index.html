@@ -16,7 +16,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://bhavukj100.github.io/airbnb/assets/og-airbnb.png">
 <style>
-:root{--ink:#130032;--muted:#665879;--accent:#4c00ff;--accent-deep:#3900bf;--accent-soft:#f3efff;--paper:#fff;--surface:#f8f3f0;--line:#e8e1ee;--radius:14px;--deep:#26065d;--mist:#cbc2ff;--font:Arial,Helvetica,sans-serif;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+:root{--ink:#0d1b2a;--muted:#5a6b7a;--accent:#1769aa;--accent-deep:#0f4f80;--accent-soft:#eaf3fa;--paper:#fff;--surface:#f2f7fb;--line:#dde8f0;--radius:14px;--deep:#10283f;--mist:#b9dcf2;--font:Arial,Helvetica,sans-serif;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
 *{box-sizing:border-box}
 body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.65 var(--font);-webkit-font-smoothing:antialiased}
 a{color:inherit;text-underline-offset:4px}
@@ -74,8 +74,8 @@ figcaption{font-size:12.5px;color:var(--muted);margin-top:11px}
 .codehead{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 16px;border-bottom:1px solid var(--line);background:var(--paper)}
 .path{font:12px/1.4 var(--mono);color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .viewfile{font-size:12px;font-weight:650;text-decoration:none;color:var(--accent);white-space:nowrap}
-pre{margin:0;padding:18px 16px;overflow:auto;max-height:420px;background:#130032;color:#e8e1ee;font:12.5px/1.75 var(--mono)}
-pre .k{color:#b8a0ff}pre .j{color:#8ef0c8}pre .c{color:#8b7fa8;font-style:italic}pre .s{color:#ffd9a0}
+pre{margin:0;padding:18px 16px;overflow:auto;max-height:420px;background:#0d1b2a;color:#dde8f0;font:12.5px/1.75 var(--mono)}
+pre .k{color:#7fc4f0}pre .j{color:#8ef0c8}pre .c{color:#7b8b99;font-style:italic}pre .s{color:#ffd9a0}
 .explain{padding:20px 22px;min-width:0}
 .explain p{font-size:13.5px;color:var(--muted);margin:0 0 14px}
 .explain ul{margin:0;padding-left:17px;font-size:13.5px;color:var(--muted)}
@@ -277,7 +277,7 @@ function show(key){
   cache[key]=t;
   if(byId('code-path').textContent===layer.file){pre.innerHTML='<code>'+highlight(t,layer.file)+'</code>';}
  }).catch(function(){
-  pre.innerHTML='<code>Could not reach GitHub just now. <a href="'+BLOB+layer.file+'" style="color:#b8a0ff">Open '+esc(layer.file)+' on GitHub</a> instead.</code>';
+  pre.innerHTML='<code>Could not reach GitHub just now. <a href="'+BLOB+layer.file+'" style="color:#7fc4f0">Open '+esc(layer.file)+' on GitHub</a> instead.</code>';
   byId('live-label').textContent='GitHub is not responding right now';
  });
 }
