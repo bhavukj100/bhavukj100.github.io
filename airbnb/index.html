@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Airbnb Analytics · Snowflake and dbt · Bhavuk Jain</title>
+<meta name="description" content="An end-to-end dbt project on Snowflake: medallion layers, incremental models, metadata-driven Gold models and SCD Type 2 snapshots. Real query results and the actual model code, pulled live from GitHub.">
+<link rel="canonical" href="https://bhavukj100.github.io/airbnb/">
+<meta name="theme-color" content="#ffffff">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Airbnb Analytics · Snowflake and dbt">
+<meta property="og:description" content="Medallion layers, incremental models, metadata-driven Gold and SCD Type 2 snapshots. Real Snowflake results and the actual code.">
+<meta property="og:url" content="https://bhavukj100.github.io/airbnb/">
+<meta property="og:image" content="https://bhavukj100.github.io/airbnb/assets/og-airbnb.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="627">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://bhavukj100.github.io/airbnb/assets/og-airbnb.png">
+<style>
+:root{--ink:#130032;--muted:#665879;--accent:#4c00ff;--accent-deep:#3900bf;--accent-soft:#f3efff;--paper:#fff;--surface:#f8f3f0;--line:#e8e1ee;--radius:14px;--deep:#26065d;--mist:#cbc2ff;--font:Arial,Helvetica,sans-serif;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.65 var(--font);-webkit-font-smoothing:antialiased}
+a{color:inherit;text-underline-offset:4px}
+button{font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+img{max-width:100%;display:block}
+.wrap{max-width:1180px;margin:auto;padding:0 36px}
+.skip{position:absolute;top:-80px;left:20px;background:var(--ink);color:#fff;padding:12px;z-index:30}.skip:focus{top:12px}
+
+/* top bar */
+.topbar{border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(255,255,255,.93);backdrop-filter:blur(8px);z-index:20}
+.topbar .wrap{display:flex;align-items:center;justify-content:space-between;gap:20px;height:60px}
+.back{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:650;text-decoration:none;color:var(--muted)}
+.back:hover{color:var(--ink)}
+.gh{display:inline-flex;align-items:center;gap:9px;background:var(--ink);color:#fff;text-decoration:none;font-size:13px;font-weight:700;padding:10px 17px;border-radius:999px}
+.gh:hover{background:var(--accent-deep)}
+.gh svg{width:17px;height:17px;flex:none}
+
+/* hero */
+.hero{padding:54px 0 10px}
+.kicker{font-size:10px;letter-spacing:.9px;color:var(--accent);font-weight:700;text-transform:uppercase}
+h1{font-size:clamp(40px,5.4vw,66px);line-height:1.05;letter-spacing:-2.4px;font-weight:400;margin:14px 0 18px}
+h1 b{font-weight:650}
+.lede{font-size:17px;color:var(--muted);max-width:650px;margin:0 0 26px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:34px}
+.chip{border:1px solid var(--line);background:var(--accent-soft);color:var(--accent-deep);font-size:12px;font-weight:700;padding:7px 13px;border-radius:999px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;margin-bottom:12px}
+.stat{background:var(--paper);padding:20px 22px}
+.stat b{display:block;font-size:30px;letter-spacing:-1.2px;font-weight:650;line-height:1.1}
+.stat span{font-size:12px;color:var(--muted)}
+.note{font-size:12px;color:var(--muted);margin:0 0 54px}
+
+/* sections */
+section{scroll-margin-top:72px;padding:46px 0;border-top:1px solid var(--line)}
+h2{font-size:27px;line-height:1.25;letter-spacing:-1px;font-weight:650;margin:0 0 6px}
+.sub{color:var(--muted);font-size:14px;margin:0 0 28px;max-width:680px}
+h3{font-size:16px;font-weight:650;letter-spacing:-.3px;margin:0 0 6px}
+
+/* evidence */
+.shots{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(380px,100%),1fr));gap:26px}
+figure{margin:0}
+.frame{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:var(--surface)}
+.frame img{width:100%}
+figcaption{font-size:12.5px;color:var(--muted);margin-top:11px}
+.lineage{border:1px solid var(--line);border-radius:var(--radius);padding:18px;background:var(--surface)}
+
+/* code explorer */
+.explorer{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+.tabs{display:flex;flex-wrap:wrap;gap:0;border-bottom:1px solid var(--line);background:var(--surface)}
+.tab{background:none;border:0;border-bottom:2px solid transparent;padding:13px 17px;font-size:13px;font-weight:650;color:var(--muted)}
+.tab[aria-selected="true"]{color:var(--accent);border-bottom-color:var(--accent);background:var(--paper)}
+.panel{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr)}
+@media(max-width:860px){.panel{grid-template-columns:1fr}}
+.codewrap{border-right:1px solid var(--line);min-width:0}
+@media(max-width:860px){.codewrap{border-right:0;border-bottom:1px solid var(--line)}}
+.codehead{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 16px;border-bottom:1px solid var(--line);background:var(--paper)}
+.path{font:12px/1.4 var(--mono);color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.viewfile{font-size:12px;font-weight:650;text-decoration:none;color:var(--accent);white-space:nowrap}
+pre{margin:0;padding:18px 16px;overflow:auto;max-height:420px;background:#130032;color:#e8e1ee;font:12.5px/1.75 var(--mono)}
+pre .k{color:#b8a0ff}pre .j{color:#8ef0c8}pre .c{color:#8b7fa8;font-style:italic}pre .s{color:#ffd9a0}
+.explain{padding:20px 22px;min-width:0}
+.explain p{font-size:13.5px;color:var(--muted);margin:0 0 14px}
+.explain ul{margin:0;padding-left:17px;font-size:13.5px;color:var(--muted)}
+.explain li{margin-bottom:7px}
+.live{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:12px}
+.dot{width:6px;height:6px;border-radius:50%;background:#1f9d55;display:inline-block}
+
+/* readme */
+#readme-box{border:1px solid var(--line);border-radius:var(--radius);padding:26px 30px;max-height:560px;overflow:auto;background:var(--surface)}
+#readme-box img{border:1px solid var(--line);border-radius:8px;margin:10px 0}
+#readme-box h1,#readme-box h2,#readme-box h3{letter-spacing:-.4px}
+#readme-box h1{font-size:24px;margin:0 0 12px}
+#readme-box h2{font-size:19px;margin:24px 0 8px}
+#readme-box h3{font-size:15px;margin:18px 0 6px}
+#readme-box p,#readme-box li{font-size:13.5px;color:var(--muted)}
+#readme-box pre{background:var(--ink);border-radius:8px;font-size:12px;max-height:none}
+#readme-box code{font:12.5px var(--mono)}
+#readme-box table{border-collapse:collapse;font-size:13px;margin:10px 0}
+#readme-box th,#readme-box td{border:1px solid var(--line);padding:6px 11px;text-align:left}
+#readme-box a{color:var(--accent)}
+#readme-box a.anchor,#readme-box .octicon-link,#readme-box .heading-element+a{display:none}
+#readme-box h1,#readme-box h2,#readme-box h3{display:flex;align-items:center;gap:8px}
+.loading{font-size:13px;color:var(--muted)}
+
+/* footer */
+.endcta{background:var(--ink);color:#fff;border-radius:var(--radius);padding:40px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:24px;margin:46px 0 60px}
+.endcta h2{color:#fff;margin:0 0 6px}
+.endcta p{color:var(--mist);font-size:14px;margin:0;max-width:440px}
+.endcta .gh{background:#fff;color:var(--ink)}
+.endcta .gh:hover{background:var(--mist)}
+footer{border-top:1px solid var(--line);padding:26px 0;font-size:12.5px;color:var(--muted);display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between}
+footer a{color:var(--muted)}
+
+/* small screens */
+#readme-box table{display:block;max-width:100%;overflow-x:auto}
+#readme-box pre,#readme-box p,#readme-box li,#readme-box h1,#readme-box h2,#readme-box h3{max-width:100%;overflow-wrap:anywhere}
+#readme-box pre{overflow-x:auto}
+@media(max-width:620px){
+.wrap{padding:0 20px}
+h1{letter-spacing:-1.4px}
+.stat{padding:16px 18px}.stat b{font-size:25px}
+section{padding:36px 0}
+.endcta{padding:28px;margin:36px 0 48px}
+#readme-box{padding:18px}
+pre{font-size:11.5px;padding:14px 12px}
+.tab{padding:11px 13px;font-size:12.5px}
+.topbar .wrap{height:54px}
+.gh{padding:9px 14px;font-size:12.5px}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="topbar"><div class="wrap">
+<a class="back" href="/">&#8592; Bhavuk Jain</a>
+<a class="gh" href="https://github.com/bhavukj100/airbnb-analytics-dbt-snowflake" target="_blank" rel="noopener">
+<svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.07-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.42 7.42 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A7.995 7.995 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+View the repository</a>
+</div></div>
+
+<main id="main">
+<div class="wrap">
+
+<div class="hero">
+<div class="kicker">Snowflake &middot; dbt &middot; SQL &middot; Jinja</div>
+<h1>Airbnb <b>Analytics</b></h1>
+<p class="lede">A dbt project that moves Airbnb bookings, listings and hosts through medallion layers in Snowflake, builds a star schema and a one big table in Gold, and keeps history with snapshots.</p>
+<div class="chips"><span class="chip">Medallion architecture</span><span class="chip">Incremental models</span><span class="chip">Metadata-driven Gold</span><span class="chip">SCD Type 2 snapshots</span><span class="chip">Star schema + OBT</span></div>
+<div class="stats">
+<div class="stat"><b>1,925,792</b><span>rows in GOLD.FACT</span></div>
+<div class="stat"><b>5,000</b><span>distinct bookings</span></div>
+<div class="stat"><b>500</b><span>distinct listings</span></div>
+<div class="stat"><b>189</b><span>distinct hosts</span></div>
+</div>
+<p class="note">Counts measured at capture time by a read-only query against <code>AIRBNB.GOLD.FACT</code>. The row total includes repeated booking IDs, so it is not a count of unique bookings.</p>
+</div>
+
+<section id="results">
+<h2>It actually ran</h2>
+<p class="sub">Not a diagram of what the pipeline would do. These are read-only queries against the built tables in Snowsight, captured from the account the project was built in.</p>
+<div class="shots">
+<figure>
+<div class="frame"><img src="assets/snowflake-overview.jpg" alt="Snowsight query counting rows and distinct booking, listing and host IDs in AIRBNB.GOLD.FACT, returning 1,925,792 rows, 5,000 bookings, 500 listings and 189 hosts in 370 milliseconds" loading="lazy"></div>
+<figcaption>The Gold fact table after a full build. One query, four counts, 370&nbsp;ms.</figcaption>
+</figure>
+<figure>
+<div class="frame"><img src="assets/snowflake-host-snapshot.jpg" alt="Snowsight query showing host snapshot rows from AIRBNB.GOLD.DIM_HOSTS with their dbt validity fields" loading="lazy"></div>
+<figcaption>Host snapshot rows with their dbt validity columns. No host had more than one distinct <code>DBT_VALID_FROM</code> at capture time, so this shows the snapshot structure rather than a captured change. Why that happened is below.</figcaption>
+</figure>
+</div>
+</section>
+
+<section id="flow">
+<h2>How the data flows</h2>
+<p class="sub">Bookings, hosts and listings pass through Bronze and Silver separately, then come together in Gold. Blue arrows are dbt dependencies. Dashed amber arrows are direct SQL table references.</p>
+<div class="lineage"><img src="assets/project-lineage.png" alt="Lineage diagram showing Airbnb bookings, hosts and listings moving from source through Bronze and Silver into Gold OBT, fact and snapshot tables" loading="lazy"></div>
+</section>
+
+<section id="code">
+<h2>The actual code</h2>
+<p class="sub">Every file below is fetched from the repository when this page loads, so what you read here is whatever is on <code>main</code> right now, not a copy that drifted.</p>
+<div class="live"><span class="dot"></span><span id="live-label">Reading from GitHub</span></div>
+<div class="explorer">
+<div class="tabs" role="tablist" aria-label="Project layers">
+<button class="tab" role="tab" aria-selected="true" data-key="sources">Source</button>
+<button class="tab" role="tab" aria-selected="false" data-key="bronze">Bronze</button>
+<button class="tab" role="tab" aria-selected="false" data-key="silver">Silver</button>
+<button class="tab" role="tab" aria-selected="false" data-key="gold">Gold</button>
+<button class="tab" role="tab" aria-selected="false" data-key="snapshot">Snapshots</button>
+<button class="tab" role="tab" aria-selected="false" data-key="macro">Macros</button>
+<button class="tab" role="tab" aria-selected="false" data-key="test">Tests</button>
+</div>
+<div class="panel">
+<div class="codewrap">
+<div class="codehead"><span class="path" id="code-path"></span><a class="viewfile" id="code-link" href="#" target="_blank" rel="noopener">Open on GitHub &#8599;</a></div>
+<pre id="code-body"><code>Loading…</code></pre>
+</div>
+<div class="explain"><h3 id="ex-title"></h3><div id="ex-body"></div></div>
+</div>
+</div>
+</section>
+
+<section id="readme">
+<h2>Straight from the README</h2>
+<p class="sub">Rendered live from the repository, so it stays in step with the project rather than becoming a stale retelling of it.</p>
+<div id="readme-box"><p class="loading">Loading the README from GitHub…</p></div>
+</section>
+
+<div class="endcta">
+<div><h2>Read the whole thing</h2><p>Models, macros, snapshots, tests and the run instructions are all in the repository.</p></div>
+<a class="gh" href="https://github.com/bhavukj100/airbnb-analytics-dbt-snowflake" target="_blank" rel="noopener">
+<svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.07-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.42 7.42 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A7.995 7.995 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+github.com/bhavukj100</a>
+</div>
+
+<footer>
+<span>Bhavuk Jain &middot; Atlanta, GA</span>
+<span><a href="/">Portfolio</a> &nbsp;&middot;&nbsp; <a href="https://github.com/bhavukj100" target="_blank" rel="noopener">GitHub</a> &nbsp;&middot;&nbsp; <a href="https://www.linkedin.com/in/bhavukj100/" target="_blank" rel="noopener">LinkedIn</a></span>
+</footer>
+
+</div>
+</main>
+
+<script>
+(function(){
+'use strict';
+var REPO='bhavukj100/airbnb-analytics-dbt-snowflake', BRANCH='main';
+var RAW='https://raw.githubusercontent.com/'+REPO+'/'+BRANCH+'/';
+var BLOB='https://github.com/'+REPO+'/blob/'+BRANCH+'/';
+
+var LAYERS={
+ sources:{file:'models/sources/sources.yml',title:'Where it starts',
+  body:'<p>Three Snowflake tables are declared as dbt sources. Nothing upstream of this lives in the project: loading <code>AIRBNB.STAGING</code> is somebody else’s job, and the project is honest about that boundary.</p><ul><li><code>staging.bookings</code> &#8594; <code>AIRBNB.STAGING.BOOKINGS</code></li><li><code>staging.hosts</code> &#8594; <code>AIRBNB.STAGING.HOSTS</code></li><li><code>staging.listings</code> &#8594; <code>AIRBNB.STAGING.LISTINGS</code></li></ul>'},
+ bronze:{file:'models/bronze/bronze_bookings.sql',title:'Bronze: append what is new',
+  body:'<p>Bronze keeps the source shape and adds nothing but discipline. The <code>is_incremental()</code> block compares <code>created_at</code> against the highest value already in the target, so a rerun appends only newer rows instead of rebuilding the table.</p><p>The honest limitation: a row that arrives late with an older timestamp sits below the watermark and never gets picked up. That is a known trade-off of a watermark, not an oversight.</p>'},
+ silver:{file:'models/silver/silver_bookings.sql',title:'Silver: transform, and make reruns safe',
+  body:'<p>Silver is where business meaning gets added, and where reruns stop being dangerous. Each model sets a <code>unique_key</code>, which turns the incremental run into a merge rather than an append.</p><ul><li><code>silver_bookings</code> keyed on <code>BOOKING_ID</code>, computes <code>total_amount</code></li><li><code>silver_hosts</code> keyed on <code>HOST_ID</code>, normalizes names and buckets response rates</li><li><code>silver_listings</code> keyed on <code>LISTING_ID</code>, adds a price band</li></ul><p>Run it twice and you get the same table, not two copies of the data.</p>'},
+ gold:{file:'models/gold/obt.sql',title:'Gold: generated, not hand-written',
+  body:'<p>The Gold models are built from a Jinja config list and a loop, so adding a dimension means adding one line to the config rather than writing another near-identical block of SQL.</p><p>Gold produces both shapes on purpose: an OBT that flattens everything for fast reporting, and a fact table joined to dimensions for flexible slicing. Which one is right depends on the question being asked, so the project keeps both.</p>'},
+ snapshot:{file:'snapshots/dim_hosts.yml',title:'Snapshots: where the real lesson was',
+  body:'<p>The three snapshots use dbt’s timestamp strategy to keep SCD Type 2 history for bookings, hosts and listings.</p><p>Look closely at <code>updated_at</code>. It points at <code>HOST_CREATED_AT</code>. A creation timestamp never changes, so the snapshot has nothing to compare, and history silently stops being captured. No error, no failed test, just a dimension that quietly stops recording.</p><p>That is why the snapshot screenshot above shows structure rather than a captured change. Finding it was the most useful thing this project taught me, and leaving it visible is more honest than quietly fixing it and claiming it always worked.</p>'},
+ macro:{file:'macros/multiply.sql',title:'Macros: write the expression once',
+  body:'<p>Small reusable SQL expressions live in macros instead of being copy-pasted into each model. <code>multiply</code> and <code>tag</code> hold the arithmetic and the bucketing used by the Silver transformations.</p><p><code>generate_schema_name</code> does the less obvious job: it routes each model to its <code>bronze</code>, <code>silver</code> or <code>gold</code> schema instead of dbt’s default naming.</p>'},
+ test:{file:'tests/source_tests.sql',title:'Tests: a start, and said so',
+  body:'<p>A single data test flags booking amounts below 200, configured at warning severity so it reports without stopping a build.</p><p>One test is not a test suite. It is in the repository as a working example of the mechanism, and the README says exactly that rather than dressing it up as coverage.</p>'}
+};
+
+var byId=function(id){return document.getElementById(id);};
+var cache={};
+
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function highlight(src,file){
+ var out=esc(src);
+ if(/\.ya?ml$/.test(file)){
+  out=out.replace(/^(\s*)([\w.-]+)(:)/gm,'$1<span class="k">$2</span>$3');
+  out=out.replace(/(#[^\n]*)/g,'<span class="c">$1</span>');
+ }else{
+  out=out.replace(/(\{\{[^}]*\}\}|\{%[^%]*%\})/g,'<span class="j">$1</span>');
+  out=out.replace(/(--[^\n]*)/g,'<span class="c">$1</span>');
+  out=out.replace(/\b(select|from|where|join|left|inner|on|as|with|and|or|not|group|order|by|having|case|when|then|else|end|union|all|distinct|max|min|count|sum|cast|coalesce)\b/gi,'<span class="k">$1</span>');
+ }
+ return out;
+}
+
+function show(key){
+ var layer=LAYERS[key];
+ byId('code-path').textContent=layer.file;
+ byId('code-link').href=BLOB+layer.file;
+ byId('ex-title').textContent=layer.title;
+ byId('ex-body').innerHTML=layer.body;
+ var pre=byId('code-body');
+ if(cache[key]){pre.innerHTML='<code>'+highlight(cache[key],layer.file)+'</code>';return;}
+ pre.innerHTML='<code>Loading '+esc(layer.file)+'…</code>';
+ fetch(RAW+layer.file,{cache:'no-cache'}).then(function(r){
+  if(!r.ok)throw new Error(r.status);return r.text();
+ }).then(function(t){
+  cache[key]=t;
+  if(byId('code-path').textContent===layer.file){pre.innerHTML='<code>'+highlight(t,layer.file)+'</code>';}
+ }).catch(function(){
+  pre.innerHTML='<code>Could not reach GitHub just now. <a href="'+BLOB+layer.file+'" style="color:#b8a0ff">Open '+esc(layer.file)+' on GitHub</a> instead.</code>';
+  byId('live-label').textContent='GitHub is not responding right now';
+ });
+}
+
+var tabs=[].slice.call(document.querySelectorAll('.tab'));
+tabs.forEach(function(t){
+ t.addEventListener('click',function(){
+  tabs.forEach(function(x){x.setAttribute('aria-selected',String(x===t));});
+  show(t.dataset.key);
+ });
+});
+show('sources');
+
+/* README, rendered by GitHub itself */
+fetch('https://api.github.com/repos/'+REPO+'/readme',{headers:{Accept:'application/vnd.github.html+json'}})
+ .then(function(r){if(!r.ok)throw new Error(r.status);return r.text();})
+ .then(function(html){
+  var box=byId('readme-box');
+  var tmp=document.createElement('div');
+  tmp.innerHTML=html;
+  [].slice.call(tmp.querySelectorAll('script,style,iframe,object,embed,form')).forEach(function(n){n.remove();});
+  [].slice.call(tmp.querySelectorAll('a')).forEach(function(a){
+   var h=a.getAttribute('href')||'';
+   if(h && h.charAt(0)==='#'){a.setAttribute('href',BLOB.replace('/blob/'+BRANCH+'/','')+h);}
+   a.setAttribute('target','_blank');a.setAttribute('rel','noopener');
+  });
+  [].slice.call(tmp.querySelectorAll('img')).forEach(function(i){
+   var s=i.getAttribute('src')||'';
+   if(s && !/^https?:/.test(s)){i.setAttribute('src',RAW+s.replace(/^\.?\//,''));}
+   i.setAttribute('loading','lazy');
+  });
+  box.innerHTML=tmp.innerHTML;
+ })
+ .catch(function(){
+  byId('readme-box').innerHTML='<p class="loading">GitHub did not answer in time. <a href="https://github.com/'+REPO+'#readme" target="_blank" rel="noopener" style="color:var(--accent);font-weight:650">Read the README on GitHub &#8599;</a></p>';
+ });
+})();
+</script>
+</body>
+</html>
