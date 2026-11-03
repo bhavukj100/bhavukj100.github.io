@@ -18,7 +18,6 @@ comfortable touch targets, and the hero explorer links always open the data view
   filters, sorting, chart/table views, and listing details operate locally on
   that embedded extract. It is static, not a live warehouse connection. The
   project walkthrough uses the verified lineage image from the project repo.
-  Credit: [Ansh Lamba's project tutorial](https://www.youtube.com/watch?v=3SZSDKEZqoA&t=819s).
 - **[Retail, reconciled](https://github.com/bhavukj100/aws-retail-sales-pipeline):**
   a small synthetic revenue example matching the repository's inputs and expected
   outputs. Day 1 shows $150 captured, $20 refunded, and $130 net; Day 2 shows an
