@@ -232,6 +232,17 @@ td button{min-width:44px;min-height:44px}
 }
 @media(max-width:370px){.navlinks{gap:10px}.preview-top{align-items:flex-start}.metric span{font-size:10px}.stage-button{font-size:11px}}
 
+
+.lyr-tabs{display:flex;gap:4px;margin:16px 0 14px;background:#e8f1f8;border-radius:100px;padding:3px}
+.lyr-tab{flex:1;border:0;background:none;border-radius:100px;padding:7px 4px;font-size:10.5px;font-weight:650;color:var(--muted);cursor:pointer;transition:background .15s,color .15s}
+.lyr-tab[aria-selected="true"]{background:var(--paper);color:var(--accent);box-shadow:0 1px 2px #10283f14}
+.lyr-table{min-height:132px}
+.lyr-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:5px 0;font-size:11px;border-bottom:1px solid #e8f1f8}
+.lyr-row:last-child{border-bottom:0}
+.lyr-row span{color:var(--muted);font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:10px}
+.lyr-row b{font-weight:650;font-size:11.5px;text-align:right}
+.lyr-row.is-new span,.lyr-row.is-new b{color:var(--accent)}
+.lyr-cap{font-size:10.5px;line-height:1.55;color:var(--muted);margin:12px 0 0;min-height:32px}
 </style>
 </head>
 <body>
@@ -240,7 +251,7 @@ td button{min-width:44px;min-height:44px}
 <div class="wrap"><nav aria-label="Main navigation"><a class="brand" href="#">Bhavuk Jain<span>.</span></a><div class="navlinks"><a href="#work">Work</a><a href="#about">About</a><a class="nav-contact" href="#contact">Say hello ↓</a></div></nav></div>
 <main id="main" class="wrap">
 <header class="hero"><div class="hero-copy"><div class="eyebrow">Senior Data Engineer · Atlanta, GA</div><h1>I make data<br><span>make sense.</span></h1><p>I'm Bhavuk. I build the pipelines, models, and reliable foundations that turn scattered data into something people can actually use.</p><div class="buttons"><a class="btn" href="#work">Take a look around <span aria-hidden="true">↓</span></a><a class="text-link" href="mailto:bhavukj100@gmail.com">Let's talk <span aria-hidden="true">↗</span></a></div></div>
-<aside class="hero-preview" aria-label="A preview of the Airbnb project"><div class="preview-top"><span>A little of what I've been building</span><span class="preview-tag">Snowflake + dbt</span></div><h2>Airbnb, a little closer.</h2><p>Twelve listings. A few filters. A look at the finished data.</p><div class="mini-label"><span>Nightly rate · project sample</span><span>Rate</span></div><button type="button" class="mini-row" data-quick-listing="9" aria-label="Explore listing 09"><span>Listing 09</span><span class="mini-track"><i style="width:21.2%"></i></span><b>55</b></button><button type="button" class="mini-row" data-quick-listing="1" aria-label="Explore listing 01"><span>Listing 01</span><span class="mini-track"><i style="width:32.3%"></i></span><b>84</b></button><button type="button" class="mini-row featured" data-quick-listing="12" aria-label="Explore listing 12"><span>Listing 12</span><span class="mini-track"><i style="width:97.3%"></i></span><b>253</b></button><div class="preview-bottom"><span>From my Snowflake project</span><a href="#airbnb">Explore the data ↓</a></div></aside></header>
+<aside class="hero-preview" aria-label="A preview of the Airbnb project"><div class="preview-top"><span>A little of what I've been building</span><span class="preview-tag">Snowflake + dbt</span></div><h2>One booking, four layers.</h2><p>The same row, getting more useful at every step.</p><div class="lyr-tabs" role="tablist" aria-label="Pipeline layer"><button type="button" class="lyr-tab" role="tab" aria-selected="true" data-layer="source">Source</button><button type="button" class="lyr-tab" role="tab" aria-selected="false" data-layer="bronze">Bronze</button><button type="button" class="lyr-tab" role="tab" aria-selected="false" data-layer="silver">Silver</button><button type="button" class="lyr-tab" role="tab" aria-selected="false" data-layer="gold">Gold</button></div><div class="lyr-table" id="lyr-table" aria-live="polite"></div><p class="lyr-cap" id="lyr-cap"></p><div class="preview-bottom"><span>Booking 9001, from my Snowflake project</span><a href="#airbnb">See it in full ↓</a></div></aside></header>
 <div class="trust"><span><strong>8+ years</strong> building data platforms</span><a class="credential" id="certification" href="https://www.credly.com/badges/913c36e8-3980-470e-8fbb-4fef7230b443" target="_blank" rel="noopener noreferrer"><img src="https://images.credly.com/images/e5c85d7f-4e50-431e-b5af-fa9d9b0596e7/linkedin_thumb_image.png" width="42" height="42" style="object-fit:contain" alt="AWS Certified Data Engineer Associate badge" decoding="async" fetchpriority="low"><span><strong>Certified Data Engineer</strong><small>AWS Associate · Verify credential ↗</small></span></a><span>Previously <strong>Travelport</strong> &amp; <strong>Rackspace</strong></span></div>
 <section class="work" id="work" aria-labelledby="work-title"><div class="sectionhead"><div><div class="eyebrow">Selected work</div><h2 id="work-title">A few things I've built.</h2></div><p>Pick a project. Try a small piece of it.<br>See the thinking behind the code.</p></div>
 <div class="project-picker" role="tablist" aria-label="Choose a project">
@@ -411,6 +422,37 @@ renderListings();render();renderRetail();revealHash();
   document.getElementById('market').addEventListener('change', () => {
     if (enabled) gtag('event', 'demo_interaction', {page_location:location.origin + location.pathname, page_referrer:''});
   });
+})();
+</script>
+<script>
+(function(){
+ var LAYERS={
+  source:{cap:'Straight out of AIRBNB.STAGING, exactly as it arrived. Nothing cleaned, nothing joined, nothing calculated.',rows:[
+   ['booking_id','9001'],['listing_id','501'],['nights_booked','3'],['booking_amount','240.00'],['booking_status','confirmed']]},
+  bronze:{cap:'Landed incrementally. Only rows newer than the last run are appended, so a rerun never duplicates the table.',rows:[
+   ['booking_id','9001'],['listing_id','501'],['nights_booked','3'],['booking_amount','240.00'],['booking_status','confirmed']]},
+  silver:{cap:'nights \u00d7 amount becomes total_amount. Keyed on booking_id, so a rerun merges the row instead of adding a second one.',rows:[
+   ['booking_id','9001'],['listing_id','501'],['total_amount','720.00',1],['booking_status','confirmed']]},
+  gold:{cap:'Joined to its listing and its host. The row now answers a question instead of just storing a fact.',rows:[
+   ['booking_id','9001'],['total_amount','720.00'],['city','Austin',1],['property_type','Apartment',1],['price_band','Medium',1],['host','Jordan_Lee \u00b7 VERY GOOD',1]]}
+ };
+ var table=document.getElementById('lyr-table'), cap=document.getElementById('lyr-cap');
+ if(!table||!cap)return;
+ var tabs=[].slice.call(document.querySelectorAll('.lyr-tab'));
+ function draw(key){
+  var L=LAYERS[key]; if(!L)return;
+  table.innerHTML=L.rows.map(function(r){
+   return '<div class="lyr-row'+(r[2]?' is-new':'')+'"><span>'+r[0]+'</span><b>'+r[1]+'</b></div>';
+  }).join('');
+  cap.textContent=L.cap;
+ }
+ tabs.forEach(function(t){
+  t.addEventListener('click',function(){
+   tabs.forEach(function(x){x.setAttribute('aria-selected',String(x===t));});
+   draw(t.dataset.layer);
+  });
+ });
+ draw('source');
 })();
 </script>
 </body></html>

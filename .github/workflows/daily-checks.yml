@@ -36,7 +36,8 @@ jobs:
           for link in page.links:
               if link.startswith('#') and link != '#': assert link[1:] in page.ids
               if link and not link.startswith(('#', 'http:', 'https:', 'mailto:')):
-                  assert (root / link).is_file(), f'Missing local asset: {link}'
+                  target = root / link.lstrip('/')
+                  assert target.is_file() or (target / 'index.html').is_file(), f'Missing local asset: {link}'
           archive = root / 'carrier-priority-demo.zip'
           with tempfile.TemporaryDirectory() as directory:
               destination = pathlib.Path(directory).resolve()
