@@ -1,0 +1,44 @@
+name: Refresh Airbnb stats from Snowflake
+on:
+  schedule:
+    - cron: '41 8 * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: snowflake-stats
+  cancel-in-progress: false
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install the Snowflake connector
+        run: python -m pip install --quiet "snowflake-connector-python==3.12.3" "cryptography==43.0.1"
+
+      - name: Query the Gold fact table
+        env:
+          SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+          SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
+          SNOWFLAKE_ROLE: ${{ secrets.SNOWFLAKE_ROLE }}
+          SNOWFLAKE_WAREHOUSE: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
+          SNOWFLAKE_PRIVATE_KEY: ${{ secrets.SNOWFLAKE_PRIVATE_KEY }}
+          SNOWFLAKE_PRIVATE_KEY_PASSPHRASE: ${{ secrets.SNOWFLAKE_PRIVATE_KEY_PASSPHRASE }}
+        run: python scripts/refresh_snowflake_stats.py
+
+      - name: Commit the numbers if they moved
+        run: |
+          if [ -n "$(git status --porcelain airbnb/stats.json)" ]; then
+            git config user.name  "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add airbnb/stats.json
+            git commit -m "Refresh Airbnb counts from Snowflake"
+            git push
+          else
+            echo "No change in the counts, nothing to commit."
+          fi

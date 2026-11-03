@@ -1,0 +1,9 @@
+{
+  "fact_rows": 1925792,
+  "unique_bookings": 5000,
+  "unique_listings": 500,
+  "unique_hosts": 189,
+  "measured_at": null,
+  "source": "AIRBNB.GOLD.FACT",
+  "note": "Baseline captured by hand in Snowsight. Replaced automatically once the scheduled Snowflake refresh runs."
+}

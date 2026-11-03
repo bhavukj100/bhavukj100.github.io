@@ -146,12 +146,12 @@ View the repository</a>
 <p class="lede">A dbt project that moves Airbnb bookings, listings and hosts through medallion layers in Snowflake, builds a star schema and a one big table in Gold, and keeps history with snapshots.</p>
 <div class="chips"><span class="chip">Medallion architecture</span><span class="chip">Incremental models</span><span class="chip">Metadata-driven Gold</span><span class="chip">SCD Type 2 snapshots</span><span class="chip">Star schema + OBT</span></div>
 <div class="stats">
-<div class="stat"><b>1,925,792</b><span>rows in GOLD.FACT</span></div>
-<div class="stat"><b>5,000</b><span>distinct bookings</span></div>
-<div class="stat"><b>500</b><span>distinct listings</span></div>
-<div class="stat"><b>189</b><span>distinct hosts</span></div>
+<div class="stat"><b id="s-rows">1,925,792</b><span>rows in GOLD.FACT</span></div>
+<div class="stat"><b id="s-bookings">5,000</b><span>distinct bookings</span></div>
+<div class="stat"><b id="s-listings">500</b><span>distinct listings</span></div>
+<div class="stat"><b id="s-hosts">189</b><span>distinct hosts</span></div>
 </div>
-<p class="note">Counts measured at capture time by a read-only query against <code>AIRBNB.GOLD.FACT</code>. The row total includes repeated booking IDs, so it is not a count of unique bookings.</p>
+<p class="note" id="s-note">Counts from a read-only query against <code>AIRBNB.GOLD.FACT</code>. The row total includes repeated booking IDs, so it is not a count of unique bookings.</p>
 </div>
 
 <section id="results">
@@ -290,6 +290,25 @@ tabs.forEach(function(t){
  });
 });
 show('sources');
+
+/* Counts, refreshed by the scheduled Snowflake job */
+fetch('stats.json',{cache:'no-cache'}).then(function(r){
+ if(!r.ok)throw new Error(r.status);return r.json();
+}).then(function(s){
+ var nf=new Intl.NumberFormat('en-US');
+ var map={'s-rows':'fact_rows','s-bookings':'unique_bookings','s-listings':'unique_listings','s-hosts':'unique_hosts'};
+ Object.keys(map).forEach(function(id){
+  var v=s[map[id]];
+  if(typeof v==='number'&&byId(id)){byId(id).textContent=nf.format(v);}
+ });
+ if(s.measured_at){
+  var d=new Date(s.measured_at);
+  if(!isNaN(d)){
+   byId('s-note').innerHTML='Last measured <b>'+d.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'})+
+    '</b> by a scheduled job running a read-only count against <code>AIRBNB.GOLD.FACT</code>. The row total includes repeated booking IDs, so it is not a count of unique bookings.';
+  }
+ }
+}).catch(function(){/* the numbers already in the markup stand */});
 
 /* README, rendered by GitHub itself */
 fetch('https://api.github.com/repos/'+REPO+'/readme',{headers:{Accept:'application/vnd.github.html+json'}})
